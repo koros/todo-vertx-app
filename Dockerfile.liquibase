@@ -1,0 +1,4 @@
+# Dockerfile.liquibase
+FROM liquibase/liquibase:5.0.1
+# Pre-install the Postgres JDBC driver into the image (no manual jar copying)
+RUN /liquibase/liquibase lpm add postgresql --global

@@ -1,0 +1,33 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
+
+  <changeSet id="001-create-todos" author="geoff">
+    <createTable tableName="todos">
+      <column name="id" type="uuid">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="title" type="varchar(200)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="varchar(2000)"/>
+      <column name="completed" type="boolean" defaultValueBoolean="false"/>
+      <column name="created_at" type="timestamp" />
+      <column name="updated_at" type="timestamp" />
+    </createTable>
+
+    <createIndex tableName="todos" indexName="idx_todos_completed">
+      <column name="completed"/>
+    </createIndex>
+    <createIndex tableName="todos" indexName="idx_todos_created_at">
+      <column name="created_at"/>
+    </createIndex>
+
+    <!-- Rollback -->
+    <rollback>
+      <dropTable tableName="todos"/>
+    </rollback>
+  </changeSet>
+</databaseChangeLog>

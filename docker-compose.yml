@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-todo}
+      POSTGRES_USER: ${POSTGRES_USER:-todo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-todo}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-todo} -d ${POSTGRES_DB:-todo}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+
+  liquibase:
+    build:
+      context: .
+      dockerfile: Dockerfile.liquibase
+    depends_on:
+      db:
+        condition: service_healthy
+    working_dir: /liquibase
+    environment:
+      LIQUIBASE_COMMAND_URL: ${LIQUIBASE_URL}
+      LIQUIBASE_COMMAND_USERNAME: "${LIQUIBASE_USER}"
+      LIQUIBASE_COMMAND_PASSWORD: "${LIQUIBASE_PASSWORD}"
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: "db.changelog-master.xml"
+    volumes:
+      - ./todo/src/main/resources/db/changelog/db.changelog-master.xml:/liquibase/db.changelog-master.xml:ro
+      - ./todo/src/main/resources/db/changelog/changes:/liquibase/changes:ro
+    command: ["update"]
+
+  app:
+    build:
+      context: .
+      dockerfile: ./todo/Dockerfile
+    container_name: todo-app
+    env_file:
+      - .env
+    depends_on:
+      liquibase:
+        condition: service_completed_successfully
+    ports:
+      - "${HTTP_PORT:-8080}:8080"

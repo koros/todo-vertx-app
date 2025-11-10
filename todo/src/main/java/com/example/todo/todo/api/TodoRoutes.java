@@ -1,0 +1,50 @@
+package com.example.todo.todo.api;
+
+import com.example.todo.todo.dto.CreateTodoRequest;
+import com.example.todo.todo.service.TodoService;
+import io.vertx.core.json.Json;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
+public class TodoRoutes {
+  private final TodoService service;
+
+  @Inject
+  public TodoRoutes(TodoService service) {
+    this.service = service;
+  }
+
+  public void mount(Router r) {
+    r.get("/todos").handler(this::list);
+    r.post("/todos").handler(this::create);
+  }
+
+  private void list(RoutingContext ctx) {
+    service
+        .list()
+        .subscribe()
+        .with(
+            items ->
+                ctx.response()
+                    .putHeader("Content-Type", "application/json")
+                    .end(Json.encode(items)),
+            err -> ctx.fail(err));
+  }
+
+  private void create(RoutingContext ctx) {
+    var req = ctx.body().asJsonObject().mapTo(CreateTodoRequest.class);
+    service
+        .create(req)
+        .subscribe()
+        .with(
+            item ->
+                ctx.response()
+                    .setStatusCode(201)
+                    .putHeader("Content-Type", "application/json")
+                    .end(Json.encode(item)),
+            err -> ctx.fail(err));
+  }
+}

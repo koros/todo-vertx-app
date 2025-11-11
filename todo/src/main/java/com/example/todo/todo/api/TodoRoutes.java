@@ -19,6 +19,7 @@ public class TodoRoutes {
 
   public void mount(Router r) {
     r.get("/todos").handler(this::list);
+    r.get("/todos/:id").handler(this::getById);
     r.post("/todos").handler(this::create);
   }
 
@@ -46,5 +47,27 @@ public class TodoRoutes {
                     .putHeader("Content-Type", "application/json")
                     .end(Json.encode(item)),
             err -> ctx.fail(err));
+  }
+
+  private void getById(RoutingContext ctx) {
+    try {
+      var id = java.util.UUID.fromString(ctx.pathParam("id"));
+      service
+          .findById(id)
+          .subscribe()
+          .with(
+              item -> {
+                if (item == null) {
+                  ctx.fail(404, new java.util.NoSuchElementException("Todo not found: " + id));
+                  return;
+                }
+                ctx.response()
+                    .putHeader("Content-Type", "application/json")
+                    .end(io.vertx.core.json.Json.encode(item));
+              },
+              ctx::fail);
+    } catch (IllegalArgumentException e) {
+      ctx.fail(400, e);
+    }
   }
 }

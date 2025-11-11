@@ -5,6 +5,7 @@ import com.example.todo.todo.dto.CreateTodoRequest;
 import com.example.todo.todo.mapper.TodoMapper;
 import com.example.todo.todo.repo.TodoRepository;
 import io.smallrye.mutiny.Uni;
+import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -28,5 +29,10 @@ public class TodoServiceImpl implements TodoService {
   @Override
   public Uni<java.util.List<TodoItem>> list() {
     return repo.findAll();
+  }
+
+  @Override
+  public Uni<TodoItem> findById(UUID id) {
+    return repo.findById(id);
   }
 }

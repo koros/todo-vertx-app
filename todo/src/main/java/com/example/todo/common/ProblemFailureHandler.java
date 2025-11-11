@@ -2,47 +2,55 @@ package com.example.todo.common;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
+import jakarta.validation.ConstraintViolationException;
 import java.net.URI;
+import java.util.NoSuchElementException;
 import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
-import org.zalando.problem.ThrowableProblem;
 
 public class ProblemFailureHandler implements Handler<RoutingContext> {
+
   @Override
   public void handle(RoutingContext ctx) {
-    int status = ctx.statusCode() > 0 ? ctx.statusCode() : 500;
     Throwable failure = ctx.failure();
-    Problem problem;
+    int status = ctx.statusCode() > 0 ? ctx.statusCode() : 500;
 
-    if (failure instanceof ThrowableProblem tp) {
-      problem = tp;
-      if (tp.getStatus() != null) status = tp.getStatus().getStatusCode();
-    } else if (failure != null) {
-      problem =
-          Problem.builder()
-              .withType(URI.create("about:blank"))
-              .withTitle(Status.valueOf(status).getReasonPhrase())
-              .withStatus(Status.valueOf(status))
-              .withDetail(failure.getMessage())
-              .with("errorClass", failure.getClass().getName())
-              .build();
-    } else {
-      problem =
-          Problem.builder()
-              .withType(URI.create("about:blank"))
-              .withTitle(Status.INTERNAL_SERVER_ERROR.getReasonPhrase())
-              .withStatus(Status.INTERNAL_SERVER_ERROR)
-              .withDetail("Unexpected error")
-              .build();
-      status = 500;
+    // Heuristics: map exception types → HTTP code
+    if (failure instanceof IllegalArgumentException) {
+      status = 400;
+    } else if (failure instanceof NoSuchElementException) {
+      status = 404;
+    } else if (failure instanceof ConstraintViolationException) {
+      status = 422; // Unprocessable Entity
     }
 
-    String json = io.vertx.core.json.jackson.DatabindCodec.mapper().valueToTree(problem).toString();
+    Problem problem = toProblem(failure, status, ctx);
+    HttpServerResponse res = ctx.response();
+    if (!res.ended()) {
+      res.setStatusCode(status)
+          .putHeader(HttpHeaders.CONTENT_TYPE, "application/problem+json")
+          .end(Json.encode(problem));
+    }
+  }
 
-    ctx.response()
-        .setStatusCode(status)
-        .putHeader(HttpHeaders.CONTENT_TYPE, "application/problem+json")
-        .end(json);
+  private Problem toProblem(Throwable failure, int status, RoutingContext ctx) {
+    Status s = Status.valueOf(status); // Will default to 500 if unknown
+    String title = s.getReasonPhrase();
+    String detail =
+        failure != null && failure.getMessage() != null
+            ? failure.getMessage()
+            : "An unexpected error occurred";
+
+    // Optionally add instance/type for better traceability
+    return Problem.builder()
+        .withType(URI.create("about:blank"))
+        .withTitle(title)
+        .withStatus(s)
+        .withDetail(detail)
+        .with("path", ctx.normalizedPath())
+        .build();
   }
 }

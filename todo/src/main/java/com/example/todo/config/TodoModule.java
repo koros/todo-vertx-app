@@ -1,6 +1,7 @@
 package com.example.todo.config;
 
 import com.example.todo.todo.api.TodoRoutes;
+import com.example.todo.todo.mapper.TodoMapper;
 import com.example.todo.todo.repo.TodoRepository;
 import com.example.todo.todo.repo.TodoRepositoryHr;
 import com.example.todo.todo.service.TodoService;
@@ -19,8 +20,8 @@ public interface TodoModule {
 
   @Provides
   @Singleton
-  static TodoService provideService(TodoRepository repo) {
-    return new TodoServiceImpl(repo);
+  static TodoService provideService(TodoRepository repo, TodoMapper mapper) {
+    return new TodoServiceImpl(repo, mapper);
   }
 
   @Provides

@@ -15,7 +15,7 @@
   <packaging>jar</packaging>
 
   <dependencies>
-    <!-- Vert.x core/web -->
+    <!-- Vert.x core/web/config (versions via Vert.x depchain BOM) -->
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
@@ -28,60 +28,55 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-config</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-pg-client</artifactId>
+    </dependency>
 
-    <!-- Hibernate Reactive + Postgres (Vert.x driver) -->
+    <!-- Hibernate Reactive (no official BOM) -->
     <dependency>
       <groupId>org.hibernate.reactive</groupId>
       <artifactId>hibernate-reactive-core</artifactId>
       <version>${hibernate.reactive.version}</version>
     </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-pg-client</artifactId>
-    </dependency>
-    <!-- JPA API & Validation -->
+
+    <!-- Jakarta APIs (versions via Jakarta EE BOM) -->
     <dependency>
       <groupId>jakarta.persistence</groupId>
       <artifactId>jakarta.persistence-api</artifactId>
-      <version>${jakarta.persistence.version}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>
-      <version>${jakarta.validation.version}</version>
+    </dependency>
+
+    <!-- JSON (versions via Jackson BOM) -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>
 
     <!-- RFC 7807 -->
     <dependency>
-    <groupId>org.zalando</groupId>
-    <artifactId>problem</artifactId>
-    <version>0.27.1</version>
+      <groupId>org.zalando</groupId>
+      <artifactId>problem</artifactId>
+      <version>${zalando.problem.version}</version>
     </dependency>
     <dependency>
-    <groupId>org.zalando</groupId>
-    <artifactId>jackson-datatype-problem</artifactId>
-    <version>0.27.1</version>
+      <groupId>org.zalando</groupId>
+      <artifactId>jackson-datatype-problem</artifactId>
+      <version>${zalando.problem.version}</version>
     </dependency>
 
-    <!-- JSON mapping -->
-    <dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-databind</artifactId>
-    <version>2.18.1</version>
-    </dependency>
-    <dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-annotations</artifactId>
-    <version>2.18.1</version>
-    </dependency>
-    <!-- Java time (Instant) support -->
-    <dependency>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
-    <artifactId>jackson-datatype-jsr310</artifactId>
-    <version>2.18.1</version>
-    </dependency>
-
-    <!-- Dagger DI -->
+    <!-- Dagger DI (no BOM) -->
     <dependency>
       <groupId>com.google.dagger</groupId>
       <artifactId>dagger</artifactId>
@@ -94,7 +89,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Lombok -->
+    <!-- Lombok (no BOM) -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -102,18 +97,17 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- (Optional) MapStruct for DTO mapping -->
+    <!-- MapStruct (no official BOM) -->
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
       <version>${mapstruct.version}</version>
     </dependency>
 
-    <!-- Testing -->
+    <!-- Testing (versions via BOMs) -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.11.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -124,7 +118,6 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.26.3</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -137,7 +130,9 @@
         <artifactId>spotless-maven-plugin</artifactId>
         <executions>
           <execution>
-            <goals><goal>apply</goal></goals>
+            <goals>
+              <goal>apply</goal>
+            </goals>
             <phase>process-sources</phase>
             <configuration>
               <java>
@@ -150,7 +145,7 @@
         </executions>
       </plugin>
 
-      <!-- Tests + coverage -->
+      <!-- Coverage -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -166,7 +161,13 @@
         </executions>
       </plugin>
 
-      <!-- Fat jar -->
+      <!-- This activates the parent pluginManagement config (annotationProcessorPaths). -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+
+      <!-- Fat/ shaded JAR -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -180,6 +181,8 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>com.example.todo.app.Bootstrap</mainClass>
                 </transformer>
+                <!-- (Optional) Keep Services transformer if you need SPI resources merged -->
+                <!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/> -->
               </transformers>
             </configuration>
           </execution>

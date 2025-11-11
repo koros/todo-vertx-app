@@ -1,5 +1,6 @@
 package com.example.todo.config;
 
+import com.example.todo.todo.mapper.TodoMapper;
 import com.example.todo.todo.repo.TodoRepository;
 import com.example.todo.todo.service.TodoService;
 import dagger.internal.DaggerGenerated;
@@ -29,20 +30,25 @@ import javax.inject.Provider;
 public final class TodoModule_ProvideServiceFactory implements Factory<TodoService> {
   private final Provider<TodoRepository> repoProvider;
 
-  public TodoModule_ProvideServiceFactory(Provider<TodoRepository> repoProvider) {
+  private final Provider<TodoMapper> mapperProvider;
+
+  public TodoModule_ProvideServiceFactory(Provider<TodoRepository> repoProvider,
+      Provider<TodoMapper> mapperProvider) {
     this.repoProvider = repoProvider;
+    this.mapperProvider = mapperProvider;
   }
 
   @Override
   public TodoService get() {
-    return provideService(repoProvider.get());
+    return provideService(repoProvider.get(), mapperProvider.get());
   }
 
-  public static TodoModule_ProvideServiceFactory create(Provider<TodoRepository> repoProvider) {
-    return new TodoModule_ProvideServiceFactory(repoProvider);
+  public static TodoModule_ProvideServiceFactory create(Provider<TodoRepository> repoProvider,
+      Provider<TodoMapper> mapperProvider) {
+    return new TodoModule_ProvideServiceFactory(repoProvider, mapperProvider);
   }
 
-  public static TodoService provideService(TodoRepository repo) {
-    return Preconditions.checkNotNullFromProvides(TodoModule.provideService(repo));
+  public static TodoService provideService(TodoRepository repo, TodoMapper mapper) {
+    return Preconditions.checkNotNullFromProvides(TodoModule.provideService(repo, mapper));
   }
 }

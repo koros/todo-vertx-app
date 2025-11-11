@@ -4,6 +4,7 @@ import com.example.todo.app.Bootstrap;
 import com.example.todo.app.MainVerticle;
 import com.example.todo.common.ProblemFailureHandler;
 import com.example.todo.todo.api.TodoRoutes;
+import com.example.todo.todo.mapper.TodoMapper;
 import com.example.todo.todo.repo.TodoRepositoryHr;
 import com.example.todo.todo.service.TodoService;
 import dagger.internal.DaggerGenerated;
@@ -50,6 +51,8 @@ public final class DaggerAppComponent {
 
     private WebModule webModule;
 
+    private MapperModule mapperModule;
+
     private Builder() {
     }
 
@@ -73,6 +76,11 @@ public final class DaggerAppComponent {
       return this;
     }
 
+    public Builder mapperModule(MapperModule mapperModule) {
+      this.mapperModule = Preconditions.checkNotNull(mapperModule);
+      return this;
+    }
+
     public AppComponent build() {
       if (vertxModule == null) {
         this.vertxModule = new VertxModule();
@@ -86,7 +94,10 @@ public final class DaggerAppComponent {
       if (webModule == null) {
         this.webModule = new WebModule();
       }
-      return new AppComponentImpl(vertxModule, hibernateModule, appModule, webModule);
+      if (mapperModule == null) {
+        this.mapperModule = new MapperModule();
+      }
+      return new AppComponentImpl(vertxModule, hibernateModule, appModule, webModule, mapperModule);
     }
   }
 
@@ -99,6 +110,8 @@ public final class DaggerAppComponent {
 
     private Provider<TodoRepositoryHr> provideRepoHrProvider;
 
+    private Provider<TodoMapper> provideTodoMapperProvider;
+
     private Provider<TodoService> provideServiceProvider;
 
     private Provider<TodoRoutes> provideRoutesProvider;
@@ -110,20 +123,21 @@ public final class DaggerAppComponent {
     private Provider<MainVerticle> provideMainVerticleProvider;
 
     private AppComponentImpl(VertxModule vertxModuleParam, HibernateModule hibernateModuleParam,
-        AppModule appModuleParam, WebModule webModuleParam) {
+        AppModule appModuleParam, WebModule webModuleParam, MapperModule mapperModuleParam) {
 
-      initialize(vertxModuleParam, hibernateModuleParam, appModuleParam, webModuleParam);
+      initialize(vertxModuleParam, hibernateModuleParam, appModuleParam, webModuleParam, mapperModuleParam);
 
     }
 
     @SuppressWarnings("unchecked")
     private void initialize(final VertxModule vertxModuleParam,
         final HibernateModule hibernateModuleParam, final AppModule appModuleParam,
-        final WebModule webModuleParam) {
+        final WebModule webModuleParam, final MapperModule mapperModuleParam) {
       this.provideVertxProvider = DoubleCheck.provider(VertxModule_ProvideVertxFactory.create(vertxModuleParam));
       this.provideSessionFactoryProvider = DoubleCheck.provider(HibernateModule_ProvideSessionFactoryFactory.create(hibernateModuleParam));
       this.provideRepoHrProvider = DoubleCheck.provider(TodoModule_ProvideRepoHrFactory.create(provideSessionFactoryProvider));
-      this.provideServiceProvider = DoubleCheck.provider(TodoModule_ProvideServiceFactory.create(((Provider) provideRepoHrProvider)));
+      this.provideTodoMapperProvider = DoubleCheck.provider(MapperModule_ProvideTodoMapperFactory.create(mapperModuleParam));
+      this.provideServiceProvider = DoubleCheck.provider(TodoModule_ProvideServiceFactory.create(((Provider) provideRepoHrProvider), provideTodoMapperProvider));
       this.provideRoutesProvider = DoubleCheck.provider(TodoModule_ProvideRoutesFactory.create(provideServiceProvider));
       this.problemFailureHandlerProvider = DoubleCheck.provider(WebModule_ProblemFailureHandlerFactory.create(webModuleParam));
       this.provideRouterProvider = DoubleCheck.provider(WebModule_ProvideRouterFactory.create(webModuleParam, provideVertxProvider, problemFailureHandlerProvider));

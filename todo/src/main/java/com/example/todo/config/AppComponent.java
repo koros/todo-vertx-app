@@ -15,7 +15,8 @@ import org.hibernate.reactive.stage.Stage;
       HibernateModule.class,
       TodoModule.class,
       AppModule.class,
-      WebModule.class
+      WebModule.class,
+      MapperModule.class
     })
 public interface AppComponent {
   Vertx vertx();

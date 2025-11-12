@@ -32,6 +32,27 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-pg-client</artifactId>
     </dependency>
+    <!-- Vert.x 5 OpenAPI pieces -->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-openapi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-openapi-router</artifactId>
+    </dependency>
+    <!-- Swagger UI -->
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>swagger-ui</artifactId>
+      <version>5.17.14</version>
+    </dependency>
+
+    <!-- (Optional but useful) request/response validation helpers -->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-validation</artifactId>
+    </dependency>
 
     <!-- Hibernate Reactive (no official BOM) -->
     <dependency>

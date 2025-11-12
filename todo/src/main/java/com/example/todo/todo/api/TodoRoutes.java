@@ -23,7 +23,7 @@ public class TodoRoutes {
     r.post("/todos").handler(this::create);
   }
 
-  private void list(RoutingContext ctx) {
+  protected void list(RoutingContext ctx) {
     service
         .list()
         .subscribe()
@@ -35,7 +35,7 @@ public class TodoRoutes {
             err -> ctx.fail(err));
   }
 
-  private void create(RoutingContext ctx) {
+  protected void create(RoutingContext ctx) {
     var req = ctx.body().asJsonObject().mapTo(CreateTodoRequest.class);
     service
         .create(req)
@@ -49,7 +49,7 @@ public class TodoRoutes {
             err -> ctx.fail(err));
   }
 
-  private void getById(RoutingContext ctx) {
+  protected void getById(RoutingContext ctx) {
     try {
       var id = java.util.UUID.fromString(ctx.pathParam("id"));
       service

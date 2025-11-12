@@ -9,22 +9,16 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.jackson.DatabindCodec;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import org.zalando.problem.jackson.ProblemModule;
 
 @Module
 public class WebModule {
-
   @Provides
   @Singleton
-  ProblemFailureHandler problemFailureHandler() {
-    return new ProblemFailureHandler();
-  }
-
-  @Provides
-  @Singleton
-  Router provideRouter(Vertx vertx, ProblemFailureHandler failure) {
-    // Configure Jackson once
+  @Named("root")
+  Router rootRouter(Vertx vertx, ProblemFailureHandler failure) {
     var mapper = DatabindCodec.mapper();
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new ProblemModule());
@@ -34,5 +28,11 @@ public class WebModule {
     router.route().handler(BodyHandler.create());
     router.route().failureHandler(failure);
     return router;
+  }
+
+  @Provides
+  @Singleton
+  ProblemFailureHandler problemFailureHandler() {
+    return new ProblemFailureHandler();
   }
 }

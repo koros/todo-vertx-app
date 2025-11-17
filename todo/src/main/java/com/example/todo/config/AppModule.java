@@ -1,6 +1,7 @@
 package com.example.todo.config;
 
 import com.example.todo.app.MainVerticle;
+import com.example.todo.todo.api.SwaggerUiHandler;
 import com.example.todo.todo.api.TodoRoutes;
 import dagger.Module;
 import dagger.Provides;
@@ -13,10 +14,7 @@ public class AppModule {
   @Provides
   @Singleton
   MainVerticle provideMainVerticle(
-      @Named("root") Router router,
-      TodoRoutes routes,
-      @Named("api") Router api,
-      @Named("docs") Router docs) {
-    return new MainVerticle(router, routes, api, docs);
+      @Named("root") Router router, TodoRoutes routes, SwaggerUiHandler swaggerUi) {
+    return new MainVerticle(router, routes, swaggerUi);
   }
 }

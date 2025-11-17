@@ -2,7 +2,6 @@ package com.example.todo.config;
 
 import com.example.todo.app.Bootstrap;
 import com.example.todo.app.MainVerticle;
-import com.example.todo.todo.api.TodoRoutes;
 import dagger.Component;
 import io.vertx.core.Vertx;
 import javax.inject.Singleton;
@@ -17,15 +16,12 @@ import org.hibernate.reactive.stage.Stage;
       AppModule.class,
       WebModule.class,
       MapperModule.class,
-      DocsModule.class,
-      OpenApiModule.class
+      DocsModule.class
     })
 public interface AppComponent {
   Vertx vertx();
 
   Stage.SessionFactory sessionFactory();
-
-  TodoRoutes todoRoutes();
 
   void inject(Bootstrap bootstrap);
 

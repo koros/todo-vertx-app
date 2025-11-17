@@ -32,15 +32,7 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-pg-client</artifactId>
     </dependency>
-    <!-- Vert.x 5 OpenAPI pieces -->
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-openapi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-web-openapi-router</artifactId>
-    </dependency>
+    <!-- (Removed) Vert.x OpenAPI runtime router; using manual routes + Swagger UI only -->
     <!-- Swagger UI -->
     <dependency>
       <groupId>org.webjars</groupId>

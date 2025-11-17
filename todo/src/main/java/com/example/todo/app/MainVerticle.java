@@ -1,5 +1,6 @@
 package com.example.todo.app;
 
+import com.example.todo.todo.api.SwaggerUiHandler;
 import com.example.todo.todo.api.TodoRoutes;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -12,26 +13,19 @@ import javax.inject.Singleton;
 public class MainVerticle extends AbstractVerticle {
   private final Router router;
   private final TodoRoutes routes;
-  private final Router api;
-  private final Router docs;
+  private final SwaggerUiHandler swaggerUi;
 
   @Inject
-  public MainVerticle(
-      @Named("root") Router router,
-      TodoRoutes routes,
-      @Named("api") Router api,
-      @Named("docs") Router docs) {
+  public MainVerticle(@Named("root") Router router, TodoRoutes routes, SwaggerUiHandler swaggerUi) {
     this.router = router;
     this.routes = routes;
-    this.api = api;
-    this.docs = docs;
+    this.swaggerUi = swaggerUi;
   }
 
   @Override
   public void start(Promise<Void> startPromise) {
-    router.route("/api/*").subRouter(api); // was: mountSubRouter("/", api)
-    router.route("/docs/*").subRouter(docs); // if your docs router serves /docs and /v3/openapi,
-    router.route("/v3/*").subRouter(docs); // mount it under these prefixes too (optional)
+    // Mount Swagger UI and OpenAPI static routes (from webroot + webjar)
+    swaggerUi.mount(vertx, router);
 
     routes.mount(router);
     vertx

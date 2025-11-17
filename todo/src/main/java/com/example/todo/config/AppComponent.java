@@ -10,13 +10,22 @@ import org.hibernate.reactive.stage.Stage;
 @Singleton
 @Component(
     modules = {
+      // Infrastructure
       VertxModule.class,
       HibernateModule.class,
-      TodoModule.class,
-      AppModule.class,
+
+      // Web layer
       WebModule.class,
+      DocsModule.class,
+
+      // Business domains
+      TodoModule.class,
+
+      // Cross-cutting
       MapperModule.class,
-      DocsModule.class
+
+      // Application wiring
+      AppModule.class
     })
 public interface AppComponent {
   Vertx vertx();

@@ -1,7 +1,6 @@
 package com.example.todo.config;
 
 import com.example.todo.app.MainVerticle;
-import com.example.todo.todo.api.SwaggerUiHandler;
 import com.example.todo.todo.api.TodoRoutes;
 import dagger.Module;
 import dagger.Provides;

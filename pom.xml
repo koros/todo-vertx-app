@@ -38,6 +38,8 @@
     <junit5.version>5.11.3</junit5.version>
     <assertj.version>3.26.3</assertj.version>
     <jakarta.bom.version>11.0.0</jakarta.bom.version>
+    <mockito.version>5.14.2</mockito.version>
+    <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
   </properties>
 
   <!-- Centralized dependency version management -->

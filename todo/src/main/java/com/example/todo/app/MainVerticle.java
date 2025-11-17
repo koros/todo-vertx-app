@@ -1,6 +1,6 @@
 package com.example.todo.app;
 
-import com.example.todo.todo.api.SwaggerUiHandler;
+import com.example.todo.config.SwaggerUiHandler;
 import com.example.todo.todo.api.TodoRoutes;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;

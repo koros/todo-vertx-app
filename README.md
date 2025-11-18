@@ -1,5 +1,11 @@
 # 🧩 TODO Reactive App (Vert.x + Hibernate Reactive + PostgreSQL)
 
+[![CI](https://github.com/koros/todo-vertx-app/actions/workflows/ci.yml/badge.svg)](https://github.com/koros/todo-vertx-app/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/koros/todo-vertx-app/branch/main/graph/badge.svg)](https://codecov.io/gh/koros/todo-vertx-app)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/projects/jdk/21/)
+[![Vert.x](https://img.shields.io/badge/Vert.x-5.0-purple.svg)](https://vertx.io)
+
 This project is a **learning exercise** exploring how to build a **Reactive CRUD API** using  
 **Eclipse Vert.x**, **Hibernate Reactive**, and **PostgreSQL** — all containerized via **Docker Compose**.
 

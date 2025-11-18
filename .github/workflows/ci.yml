@@ -37,13 +37,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Run Liquibase migrations
-        run: |
-          mvn -f todo/pom.xml liquibase:update \
-            -Dliquibase.url=jdbc:postgresql://localhost:5432/todo_db \
-            -Dliquibase.username=todo_user \
-            -Dliquibase.password=todo_pass
-
       - name: Build with Maven
         run: mvn clean install -DskipTests
 

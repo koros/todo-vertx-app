@@ -1,4 +1,4 @@
-package com.example.todo.config;
+package com.example.todo.todo.api;
 
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;

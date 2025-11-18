@@ -9,7 +9,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.jackson.DatabindCodec;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import org.zalando.problem.jackson.ProblemModule;
 
@@ -17,7 +16,6 @@ import org.zalando.problem.jackson.ProblemModule;
 public class WebModule {
   @Provides
   @Singleton
-  @Named("root")
   Router rootRouter(Vertx vertx, ProblemFailureHandler failure) {
     var mapper = DatabindCodec.mapper();
     mapper.registerModule(new JavaTimeModule());

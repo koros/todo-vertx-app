@@ -200,6 +200,14 @@
             <id>report</id>
             <phase>verify</phase>
             <goals><goal>report</goal></goals>
+            <configuration>
+              <excludes>
+                <!-- Exclude application bootstrap -->
+                <exclude>com/example/todo/app/**</exclude>
+                <!-- Exclude Dagger generated and configuration classes -->
+                <exclude>com/example/todo/config/**</exclude>
+              </excludes>
+            </configuration>
           </execution>
         </executions>
       </plugin>
